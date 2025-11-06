@@ -966,16 +966,15 @@ function Library:createSlider(options: table, parent, scrollingFrame)
 	Slider.Visible = true
 	Slider.Parent = parent or self.Section
 
-	local TextLabel = Slider.TextButton.TextLabel
-	local ImageButton = TextLabel.ImageButton
-	local TextBox = TextLabel.TextBox
-
 	local Line = Slider.Line
 	local TextButton = Slider.TextButton
 	local Fill = Line.Fill
 
 	local TextLabel = TextButton.TextLabel
 	TextLabel.Text = options.text
+	
+	local ImageButton = TextLabel.ImageButton
+	local TextBox = TextLabel.TextBox
 
 	local Circle = Fill.Circle
 	local InnerCircle = Circle.InnerCircle
@@ -2266,7 +2265,6 @@ task.spawn(function()
 end)
 
 return Library
-
 
 
 
