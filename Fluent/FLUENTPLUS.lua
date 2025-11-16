@@ -8275,13 +8275,13 @@ local SaveManager = {} do
 		Toggle = {
 
 
-			Save = function(idx, object) 
+		Save = function(idx, object) 
 
 
-				return { type = "Toggle", idx = idx, value = object.Value } 
+			return { type = "Toggle", idx = tostring(idx), value = object.Value or false } 
 
 
-			end,
+		end,
 
 
 			Load = function(idx, data)
@@ -8305,13 +8305,13 @@ local SaveManager = {} do
 		Slider = {
 
 
-			Save = function(idx, object)
+		Save = function(idx, object)
 
 
-				return { type = "Slider", idx = idx, value = tostring(object.Value) }
+			return { type = "Slider", idx = tostring(idx), value = tostring(object.Value or 0) }
 
 
-			end,
+		end,
 
 
 			Load = function(idx, data)
@@ -8335,13 +8335,13 @@ local SaveManager = {} do
 		Dropdown = {
 
 
-			Save = function(idx, object)
+		Save = function(idx, object)
 
 
-				return { type = "Dropdown", idx = idx, value = object.Value, mutli = object.Multi }
+			return { type = "Dropdown", idx = tostring(idx), value = object.Value or "", mutli = object.Multi }
 
 
-			end,
+		end,
 
 
 			Load = function(idx, data)
@@ -8365,13 +8365,19 @@ local SaveManager = {} do
 		Colorpicker = {
 
 
-			Save = function(idx, object)
+		Save = function(idx, object)
 
 
-				return { type = "Colorpicker", idx = idx, value = object.Value:ToHex(), transparency = object.Transparency }
+			local hexValue = "FFFFFF"
+			if object.Value and typeof(object.Value) == "Color3" then
+				pcall(function()
+					hexValue = object.Value:ToHex()
+				end)
+			end
+			return { type = "Colorpicker", idx = tostring(idx), value = hexValue, transparency = object.Transparency or 0 }
 
 
-			end,
+		end,
 
 
 			Load = function(idx, data)
@@ -8395,13 +8401,13 @@ local SaveManager = {} do
 		Keybind = {
 
 
-			Save = function(idx, object)
+		Save = function(idx, object)
 
 
-				return { type = "Keybind", idx = idx, mode = object.Mode, key = object.Value }
+			return { type = "Keybind", idx = tostring(idx), mode = object.Mode or "Toggle", key = object.Value or "None" }
 
 
-			end,
+		end,
 
 
 			Load = function(idx, data)
@@ -8428,13 +8434,13 @@ local SaveManager = {} do
 		Input = {
 
 
-			Save = function(idx, object)
+		Save = function(idx, object)
 
 
-				return { type = "Input", idx = idx, text = object.Value }
+			return { type = "Input", idx = tostring(idx), text = tostring(object.Value or "") }
 
 
-			end,
+		end,
 
 
 		Load = function(idx, data)
@@ -8466,7 +8472,7 @@ local SaveManager = {} do
 
 				return { 
 					type = "Vector3Position", 
-					idx = idx, 
+					idx = tostring(idx), 
 					x = object.Value.X, 
 					y = object.Value.Y, 
 					z = object.Value.Z 
@@ -8554,7 +8560,7 @@ local SaveManager = {} do
 
 
 
-		local fullPath = self.Folder .. "/" .. name .. ".json"
+		local fullPath = tostring(self.Folder or "FluentSettings") .. "/" .. tostring(name) .. ".json"
 
 
 
@@ -8580,8 +8586,10 @@ local SaveManager = {} do
 
 			if self.Parser[option.Type] and not self.Ignore[idx] then
 
-
-				table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
+				local savedData = self.Parser[option.Type].Save(idx, option)
+				if savedData then
+					table.insert(data.objects, savedData)
+				end
 
 
 			end
@@ -8638,7 +8646,7 @@ local SaveManager = {} do
 
 
 
-			local file = self.Folder .. "/" .. name .. ".json"
+			local file = tostring(self.Folder or "FluentSettings") .. "/" .. tostring(name) .. ".json"
 
 
 			if not isfile(file) then return false, "Create Config Save File" end
@@ -8713,16 +8721,16 @@ local SaveManager = {} do
 	function SaveManager:BuildFolderTree()
 
 
-		local paths = {
+	local paths = {
 
 
-			self.Folder,
+		tostring(self.Folder or "FluentSettings"),
 
 
-			self.Folder .. "/"
+		tostring(self.Folder or "FluentSettings") .. "/"
 
 
-		}
+	}
 
 
 
@@ -8755,7 +8763,7 @@ local SaveManager = {} do
 	function SaveManager:RefreshConfigList()
 
 
-		local list = listfiles(self.Folder .. "/")
+		local list = listfiles(tostring(self.Folder or "FluentSettings") .. "/")
 
 
 
@@ -9364,10 +9372,10 @@ local InterfaceManager = {} do
 
 
 
-		table.insert(paths, self.Folder)
+		table.insert(paths, tostring(self.Folder or "FluentSettings"))
 
 
-		table.insert(paths, self.Folder .. "/")
+		table.insert(paths, tostring(self.Folder or "FluentSettings") .. "/")
 
 
 
